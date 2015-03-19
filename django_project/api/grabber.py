@@ -2,6 +2,7 @@
 import requests
 import re, urllib, json
 from django.utils.encoding import *
+from api.models import Lyrics
 
 def encoded_dict(in_dict):
     out_dict = {}
@@ -172,11 +173,22 @@ def grab_lyrics(artista, musica):
 	data = {}
 	data['status'] = 'ok'
 
+	database = Lyrics.objects.filter(artist__startswith=artista,song__startswith=musica)[:1]
+
+	if database.count() is 1:
+		data['text'] = database[0].text
+		data['source'] = 'database'
+		return json.dumps(data)
+
 	vaga, url = fetch_lyrics_vaga(artista, musica)
 
 	if vaga is not None:
 		data['text'] = vaga
 		data['source'] = url
+
+		lyric_object = Lyrics(artist=artista, song=musica, text=vaga)
+		lyric_object.save()
+
 		return json.dumps(data)
 
 	terra, url = fetch_lyrics_terra(artista, musica)
@@ -184,6 +196,10 @@ def grab_lyrics(artista, musica):
 	if terra is not None:
 		data['text'] = terra
 		data['source'] = url
+
+		lyric_object = Lyrics(artist=artista, song=musica, text=terra)
+		lyric_object.save()
+
 		return json.dumps(data)
 	
 	data['text'] = "not found"
