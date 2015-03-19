@@ -172,37 +172,40 @@ def fetch_lyrics_terra(artist, song):
 def grab_lyrics(artista, musica):
 	data = {}
 	data['status'] = 'ok'
+	data['source'] = 'external'
+	data['url'] = None
 
-	database = Lyrics.objects.filter(artist__startswith=artista,song__startswith=musica)[:1]
+	database = Lyrics.objects.filter(artist__icontains=artista,song__icontains=musica)[:1]
 
 	if database.count() is 1:
 		data['text'] = database[0].text
 		data['source'] = 'database'
-		return json.dumps(data)
-
-	vaga, url = fetch_lyrics_vaga(artista, musica)
-
-	if vaga is not None:
-		data['text'] = vaga
-		data['source'] = url
-
-		lyric_object = Lyrics(artist=artista, song=musica, text=vaga)
-		lyric_object.save()
-
+		data['url'] = database[0].url
 		return json.dumps(data)
 
 	terra, url = fetch_lyrics_terra(artista, musica)
 
 	if terra is not None:
 		data['text'] = terra
-		data['source'] = url
+		data['url'] = url
 
-		lyric_object = Lyrics(artist=artista, song=musica, text=terra)
+		lyric_object = Lyrics(artist=artista, song=musica, text=terra, url=url)
+		lyric_object.save()
+
+		return json.dumps(data)
+
+	vaga, url = fetch_lyrics_vaga(artista, musica)
+
+	if vaga is not None:
+		data['text'] = vaga
+		data['url'] = url
+
+		lyric_object = Lyrics(artist=artista, song=musica, text=vaga)
 		lyric_object.save()
 
 		return json.dumps(data)
 	
 	data['text'] = "not found"
 	data['status'] = '404'
-	data['source'] = 'None'
+	data['source'] = None
 	return json.dumps(data)
