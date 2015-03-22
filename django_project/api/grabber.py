@@ -52,7 +52,7 @@ def fetch_lyrics_vaga(artist, song):
 		lyrics = re.search(b'<div itemprop=description>(.*?)<\/div>', page.content, re.DOTALL)
 
 		if lyrics:
-			return lyrics.group(1).replace("<br/>","\n").replace('\n', '', 1).decode(encoding), url
+			return lyrics.group(1).replace("<br/>","\n").strip(' \t\n\r').decode(encoding), url
 		else:
 			return None, None
 	except:
@@ -91,6 +91,8 @@ def fetch_lyrics_terra(artist, song):
 		resp = resp.replace("<br/>", "")
 		resp = resp.replace("</p>", "")
 		resp = resp.replace("<p>", "\n")
+
+		resp = resp.strip(' \t\n\r')
 
 		return resp, url
 
@@ -183,16 +185,7 @@ def grab_lyrics(artista, musica):
 		data['url'] = database[0].url
 		return json.dumps(data)
 
-	terra, url = fetch_lyrics_terra(artista, musica)
 
-	if terra is not None:
-		data['text'] = terra
-		data['url'] = url
-
-		lyric_object = Lyrics(artist=artista, song=musica, text=terra, url=url)
-		lyric_object.save()
-
-		return json.dumps(data)
 
 	vaga, url = fetch_lyrics_vaga(artista, musica)
 

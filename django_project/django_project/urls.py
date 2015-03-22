@@ -10,6 +10,7 @@ urlpatterns = patterns('',
 
 	#url(r'^api/(?P<off1>.+)/(?P<off2>.+)/$', api_view),
 	url(r'^api/$', api_view),
+	url(r'^$', home_view),
     # Examples:
     # url(r'^$', 'lyrics.views.home', name='home'),
     # url(r'^lyrics/', include('lyrics.foo.urls')),
