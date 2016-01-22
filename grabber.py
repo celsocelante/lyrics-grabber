@@ -1,6 +1,5 @@
 # -*- coding: utf8 -*-
-import requests
-import re, urllib, json
+import requests, re, urllib, json, sys
 
 # Method found on: http://stackoverflow.com/questions/6480723/urllib-urlencode-doesnt-like-unicode-values-how-about-this-workaround
 def encoded_dict(in_dict):
@@ -117,6 +116,8 @@ def grab_lyrics(artista, musica):
     data['status'] = '404'
     return json.dumps(data)
 
-s = str(raw_input("Enter a song name: "))
-a = str(raw_input("Enter the artist of the song: "))
-print grab_lyrics(a, s)
+if len(sys.argv) != 3:
+    print "Usage: python %s songName artistName" % (sys.argv[0])
+    sys.exit()
+
+print grab_lyrics(sys.argv[1], sys.argv[2])
