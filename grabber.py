@@ -83,7 +83,6 @@ def fetch_lyrics_terra(artist, song):
 			return None, None
 		resp = resp[:(end)]
 
-		# replace unwanted parts
 		resp = resp.replace("<br/>", "")
 		resp = resp.replace("</p>", "")
 		resp = resp.replace("<p>", "\n")
