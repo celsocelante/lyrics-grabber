@@ -5,5 +5,5 @@ This script retrieves songs lyrics from Vagalume.com.br and Letras.mus.br. Do no
 Run the following command. Song and artist names will be passed as arguments.
 
 ```bash
-$ python grabber.py "The Winner Takes It All" "ABBA"
+$ python grabber.py "The Winner Takes It All" ABBA
 ```
